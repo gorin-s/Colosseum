@@ -412,6 +412,10 @@ void APIPCamera::setupCameraFromSettings(const APIPCamera::CameraSetting& camera
             updateCameraSetting(camera_, capture_setting, ned_transform);
             setDistortionMaterial(image_type, camera_, camera_->PostProcessSettings);
             setNoiseMaterial(image_type, camera_, camera_->PostProcessSettings, noise_setting);
+            auto rotation_ = camera_setting.rotation;
+            auto pitchRotator = FRotator(std::isnan(rotation_.pitch) ? 0 : rotation_.pitch, 
+                std::isnan(rotation_.roll) ? 0 : rotation_.roll, std::isnan(rotation_.yaw) ? 0 : rotation_.yaw);
+            camera_->SetRelativeRotation(pitchRotator);
             copyCameraSettingsToAllSceneCapture(camera_); //CinemAirSim
         }
     }
