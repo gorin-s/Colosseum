@@ -10,6 +10,7 @@
 #include "vehicles/multirotor/firmwares/mavlink/ArduCopterSoloParams.hpp"
 #include "vehicles/multirotor/firmwares/arducopter/ArduCopterParams.hpp"
 #include "vehicles/multirotor/firmwares/arducopter/TemaCopterParams.hpp"
+#include "vehicles/multirotor/firmwares/arducopter/Tema7035CopterParams.hpp"
 
 namespace msr
 {
@@ -36,6 +37,9 @@ namespace airlib
             }
             else if (vehicle_setting->vehicle_type == AirSimSettings::kVehicleTypeTemaCopter) {
                 config.reset(new TemaCopterParams(*static_cast<const AirSimSettings::MavLinkVehicleSetting*>(vehicle_setting), sensor_factory));
+            }
+            else if (vehicle_setting->vehicle_type == AirSimSettings::kVehicleTypeTema7035Copter) {
+                config.reset(new Tema7035CopterParams(*static_cast<const AirSimSettings::MavLinkVehicleSetting*>(vehicle_setting), sensor_factory));
             }
             else if (vehicle_setting->vehicle_type == "" || //default config
                      vehicle_setting->vehicle_type == AirSimSettings::kVehicleTypeSimpleFlight) {

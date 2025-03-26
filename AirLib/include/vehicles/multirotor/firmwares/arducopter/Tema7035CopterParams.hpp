@@ -1,7 +1,7 @@
 // Licensed under the MIT License.
 
-#ifndef msr_airlib_vehicles_TemaCopter_hpp
-#define msr_airlib_vehicles_TemaCopter_hpp
+#ifndef msr_airlib_vehicles_Tema7035Copter_hpp
+#define msr_airlib_vehicles_Tema7035Copter_hpp
 
 #include "vehicles/multirotor/firmwares/arducopter/ArduCopterApi.hpp"
 #include "vehicles/multirotor/MultiRotorParams.hpp"
@@ -13,16 +13,16 @@ namespace msr
 namespace airlib
 {
 
-    class TemaCopterParams : public MultiRotorParams
+    class Tema7035CopterParams : public MultiRotorParams
     {
     public:
-        TemaCopterParams(const AirSimSettings::MavLinkVehicleSetting& vehicle_setting, std::shared_ptr<const SensorFactory> sensor_factory)
+        Tema7035CopterParams(const AirSimSettings::MavLinkVehicleSetting& vehicle_setting, std::shared_ptr<const SensorFactory> sensor_factory)
             : sensor_factory_(sensor_factory)
         {
             connection_info_ = getConnectionInfo(vehicle_setting);
         }
 
-        virtual ~TemaCopterParams() = default;
+        virtual ~Tema7035CopterParams() = default;
 
         virtual std::unique_ptr<MultirotorApiBase> createMultirotorApi() override
         {
@@ -58,10 +58,31 @@ namespace airlib
             real_T motor_assembly_weight = 0.060f; //ECOII 2807 + 7037 prop - about 60 grams
             real_T box_mass = params.mass - params.rotor_count * motor_assembly_weight;
 
-            params.rotor_params.propeller_diameter = 0.1778f; //7"
-            params.rotor_params.propeller_height = 0.0072f; //7.2 mm
-            params.rotor_params.max_rpm = 20000.0f; //Approx 20000 RPM on ECOII 2807 
+            params.rotor_params.propeller_diameter = 0.1788f; //7"
+            params.rotor_params.propeller_height = 0.0070f; //7.0 mm
+            params.rotor_params.max_rpm = 13461.5f; //Approx 20000 RPM on ECOII 2807 
 
+            /*
+              https://www.youtube.com/watch?v=GAydIsxsKAQ
+              https://ekran.store/content/images/10/737x336l80mc0/15191208475239.webp
+
+              Based on similar motor we can adjust C_T to about 0.1637, so that calculated thrust is similar to one, provided in the table
+              |Throttle, %                        |   30|   40|    50|    60|    70|    80|    90|    100|
+              |Voltage, V                         |   24|   24|    24|    24|    24|    24|    24|     24|
+              |Current, A                         |    3|  5,2|     9|  13,6|  19,2|  27,1|    36|     42|
+              |RPM                                | 8569|10635| 12323| 15062| 16816| 19185| 20539|  21523|
+              |Thrust, gF                         |  407|  593|   892|  1164|  1466|  1932|  2301|   2538|
+              |Power, W                           |   72|124,8|   216| 326,4|458,88|647,69| 856,8|1000,14|
+              |Thrust, based on C_T, N            |4,088|6,296| 8,454|12,629|15,742|20,490|23,484| 25,788| With C_T = 0.1637 Thrusts are similar
+              |Torque, based on C_P, Nm           |0,049|0,076| 0,102| 0,152| 0,190| 0,247| 0,283|  0,311| IDK what it means, kinda similar to torque in youtube video, 
+              |                                   |     |     |      |      |      |      |      |       | but there max torque is 0.35 @ 7200 RPM and min torque is 0.04 @ 15000 RPM
+              |Motor/Electric Efficiency, %       |   70|   72|    74|    76|    76|    75|    70|     70| Effiency taken from youtube video
+              |Motor Power, based on Efficiency, W| 50,4|89,86|159,84|248,06|348,75|485,77|599,76| 700,10| Electrical Power * Efficiency
+              |Power, based on C_P, W             |44,19|84,49|131,44|240,01| 334,0|495,97|608,57| 700,30| With C_P = 0.0697 Power is similar
+
+            */
+            params.rotor_params.C_T = 0.1637f;
+            params.rotor_params.C_P = 0.0697f;
             params.rotor_params.calculateMaxThrust(); //TODO
 
             // Dimensions of core body box or abdomen, in meters (not including arms).
