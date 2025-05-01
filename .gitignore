@@ -402,3 +402,6 @@ PythonClient/docs/_build
 
 # clangd generated folder, for e.g. from VSCode clangd extension
 .cache/
+
+# Non-public projects
+Unreal/Environments/TestSite

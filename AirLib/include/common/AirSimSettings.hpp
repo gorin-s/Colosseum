@@ -820,7 +820,7 @@ namespace airlib
 
             std::unique_ptr<VehicleSetting> vehicle_setting;
             if (vehicle_type == kVehicleTypePX4 || vehicle_type == kVehicleTypeArduCopterSolo || vehicle_type == kVehicleTypeArduCopter 
-                || vehicle_type == kVehicleTypeArduRover || vehicle_type == kVehicleTypeTemaCopter)
+                || vehicle_type == kVehicleTypeArduRover || vehicle_type == kVehicleTypeTemaCopter || vehicle_type == kVehicleTypeTema7035Copter)
                 vehicle_setting = createMavLinkVehicleSetting(settings_json);
             //for everything else we don't need derived class yet
             else {
